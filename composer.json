@@ -1,0 +1,12 @@
+{
+    "name": "josalba/mysql-connect",
+    "authors": [{
+        "name": "Jos Alba",
+        "email": "hola@josalba.dev"
+    }],
+    "autoload": {
+        "psr-4": {
+            "mysqlconnect\\": "src"
+        }
+    }
+}
