@@ -8,5 +8,8 @@
         "psr-4": {
             "mysqlconnect\\": "src"
         }
-    }
+    },
+  "require": {
+    "ext-mysqli": "*"
+  }
 }
