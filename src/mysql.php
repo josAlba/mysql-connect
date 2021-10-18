@@ -8,7 +8,7 @@ use stdClass;
 
 class mysql
 {
-    private $db;
+    private mysqli $db;
 
     /**
      * @param string $text
@@ -63,5 +63,4 @@ class mysql
         }
         return $resultObject;
     }
-
 }
