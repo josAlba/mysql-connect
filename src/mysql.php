@@ -2,6 +2,7 @@
 
 namespace mysqlconnect;
 
+use Exception;
 use mysqli;
 use mysqli_result;
 use stdClass;
@@ -47,11 +48,13 @@ class mysql
         $this->db->set_charset("utf8");
     }
 
-    private function disconnect(): void
+    private function disconnect(): bool
     {
         try {
             $this->db->close();
+            return true;
         } catch (Exception $e) {
+            return false;
         }
     }
 
@@ -64,20 +67,15 @@ class mysql
         return $this->db->real_escape_string($text);
     }
 
-    public function _ultimo_id(): mixed
-    {
-        return $this->db->insert_id;
-    }
-
     /**
-     * @param string $sql
+     * @param string $query
      * @return stdClass|null
      */
-    public function _db_consulta(string $sql): ?stdClass
+    public function query(string $query): ?stdClass
     {
         $this->connect();
 
-        $result = $this->db->query($sql);
+        $result = $this->db->query($query);
         if ($result instanceof mysqli_result) {
             $data = array();
 
@@ -97,5 +95,21 @@ class mysql
         $this->disconnect();
 
         return $resultObject;
+    }
+
+    public function queryInsert(string $query): mixed
+    {
+        $this->connect();
+
+        $this->db->query($query);
+        $insertId = $this->db->insert_id;
+
+        if (empty($insertId)) {
+            return null;
+        }
+
+        $this->disconnect();
+
+        return $insertId;
     }
 }
