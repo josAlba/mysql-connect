@@ -9,6 +9,48 @@ use stdClass;
 class mysql
 {
     private mysqli $db;
+    private string $host;
+    private string $user;
+    private string $password;
+    private string $database;
+    private int $port;
+
+    public function __construct(
+        string $host,
+        string $user,
+        string $password,
+        int $port,
+        string $database
+    )
+    {
+        $this->host = $host;
+        $this->user = $user;
+        $this->password = $password;
+        $this->database = $database;
+        $this->port = $port;
+    }
+
+    public function __destruct()
+    {
+        $this->disconnect();
+    }
+
+    private function connect(): void
+    {
+        $this->db = new mysqli(
+            $this->host,
+            $this->user,
+            $this->password,
+            $this->database,
+            $this->port
+        );
+        $this->db->set_charset("utf8");
+    }
+
+    private function disconnect(): void
+    {
+        $this->db->close();
+    }
 
     /**
      * @param string $text
@@ -19,24 +61,7 @@ class mysql
         return $this->db->real_escape_string($text);
     }
 
-    public function __construct($host, $user, $passwd, $port, $db)
-    {
-        $this->db = new mysqli(
-            $host,
-            $user,
-            $passwd,
-            $db,
-            $port
-        );
-        $this->db->set_charset("utf8");
-    }
-
-    public function __destruct()
-    {
-        $this->db->close();
-    }
-
-    public function _ultimo_id()
+    public function _ultimo_id(): mixed
     {
         return $this->db->insert_id;
     }
@@ -47,6 +72,8 @@ class mysql
      */
     public function _db_consulta(string $sql): ?stdClass
     {
+        $this->connect();
+
         $result = $this->db->query($sql);
         if ($result instanceof mysqli_result) {
             $data = array();
@@ -60,8 +87,12 @@ class mysql
             $resultObject->row = $data[0] ?? array();
             $resultObject->rows = $data;
         } else {
+            $this->disconnect();
             return null;
         }
+
+        $this->disconnect();
+
         return $resultObject;
     }
 }
