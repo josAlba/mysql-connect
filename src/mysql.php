@@ -25,8 +25,9 @@ class mysql
             $host,
             $user,
             $passwd,
-            $port,
-            $db);
+            $db,
+            $port
+        );
         $this->db->set_charset("utf8");
     }
 
