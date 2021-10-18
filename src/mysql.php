@@ -9,7 +9,7 @@ use stdClass;
 
 class mysql
 {
-    private mysqli $db;
+    private ?mysqli $db = null;
     private string $host;
     private string $user;
     private string $password;
@@ -48,14 +48,14 @@ class mysql
         $this->db->set_charset("utf8");
     }
 
-    private function disconnect(): bool
+    private function disconnect(): void
     {
-        try {
-            $this->db->close();
-            return true;
-        } catch (Exception $e) {
-            return false;
+        if ($this->db === null) {
+            return;
         }
+        
+        $this->db->close();
+        $this->db = null;
     }
 
     /**
