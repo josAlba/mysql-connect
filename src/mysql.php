@@ -49,7 +49,10 @@ class mysql
 
     private function disconnect(): void
     {
-        $this->db->close();
+        try {
+            $this->db->close();
+        } catch (Exception $e) {
+        }
     }
 
     /**
